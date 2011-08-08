@@ -140,12 +140,12 @@ module HoptoadNotifier
 
     def unwrap_exception(exception)
       if exception.respond_to?(:original_exception)
-        exception.original_exception
+        unwrapped_exception = exception.original_exception
       elsif exception.respond_to?(:continued_exception)
-        exception.continued_exception
-      else
-        exception
+        unwrapped_exception = exception.continued_exception
       end
+
+      unwrapped_exception.nil? ? exception : unwrapped_exception
     end
   end
 end

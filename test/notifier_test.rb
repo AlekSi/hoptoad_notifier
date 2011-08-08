@@ -202,7 +202,7 @@ class NotifierTest < Test::Unit::TestCase
       assert_nil @hash[:controller]
     end
 
-    context "when an exception that provides #original_exception is raised" do
+    context "when an exception that provides meaning #original_exception is raised" do
       setup do
         @exception.stubs(:original_exception).returns(begin
           raise NotifierTest::OriginalException.new
@@ -217,7 +217,18 @@ class NotifierTest < Test::Unit::TestCase
       end
     end
 
-    context "when an exception that provides #continued_exception is raised" do
+    context "when an exception that provides useless #original_exception is raised" do
+      setup do
+        @exception.stubs(:original_exception).returns(nil)
+      end
+
+      should "not unwrap exceptions that provide #original_exception" do
+        @hash = HoptoadNotifier.build_lookup_hash_for(@exception)
+        assert_equal @exception.class.to_s, @hash[:error_class]
+      end
+    end
+
+    context "when an exception that provides meaning #continued_exception is raised" do
       setup do
         @exception.stubs(:continued_exception).returns(begin
           raise NotifierTest::ContinuedException.new
